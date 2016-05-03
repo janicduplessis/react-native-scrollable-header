@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'blue',
+    backgroundColor: '#03A9F4',
   },
   bar: {
     marginTop: 28,
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   row: {
     height: 40,
     margin: 16,
-    backgroundColor: 'red',
+    backgroundColor: '#D3D3D3',
     alignItems: 'center',
     justifyContent: 'center',
   },
