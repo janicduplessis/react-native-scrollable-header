@@ -2,14 +2,16 @@ import React, {Component} from 'react';
 import {
   Animated,
   Image,
+  Platform,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 
 const HEADER_MAX_HEIGHT = 200;
-const HEADER_MIN_HEIGHT = 60;
+const HEADER_MIN_HEIGHT = Platform.OS === 'ios' ? 60 : 73;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 export default class ScrollableHeader extends Component {
@@ -65,6 +67,11 @@ export default class ScrollableHeader extends Component {
 
     return (
       <View style={styles.fill}>
+        <StatusBar
+          translucent
+          barStyle="light-content"
+          backgroundColor="rgba(0, 0, 0, 0.251)"
+        />
         <ScrollView
           style={styles.fill}
           scrollEventThrottle={16}
@@ -117,11 +124,11 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     width: null,
-    height: 200,
+    height: HEADER_MAX_HEIGHT,
     resizeMode: 'cover',
   },
   bar: {
-    marginTop: 28,
+    marginTop: Platform.OS === 'ios' ? 28 : 38,
     height: 32,
     alignItems: 'center',
     justifyContent: 'center',
