@@ -46,10 +46,20 @@ export default class ScrollableHeader extends Component {
       outputRange: [1, 1, 0],
       extrapolate: 'clamp',
     });
-
     const imageTranslate = this.state.scrollY.interpolate({
       inputRange: [0, HEADER_SCROLL_DISTANCE],
       outputRange: [0, -50],
+      extrapolate: 'clamp',
+    });
+
+    const titleScale = this.state.scrollY.interpolate({
+      inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
+      outputRange: [1, 1, 0.8],
+      extrapolate: 'clamp',
+    });
+    const titleTranslate = this.state.scrollY.interpolate({
+      inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
+      outputRange: [0, 0, -8],
       extrapolate: 'clamp',
     });
 
@@ -72,9 +82,14 @@ export default class ScrollableHeader extends Component {
             ]}
             source={require('./images/cat.jpg')}
           />
-          <View style={styles.bar}>
+          <Animated.View
+            style={[
+              styles.bar,
+              {transform: [{scale: titleScale}, {translateY: titleTranslate}]},
+            ]}
+          >
             <Text style={styles.title}>Title</Text>
-          </View>
+          </Animated.View>
         </Animated.View>
       </View>
     );
@@ -113,7 +128,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 18,
   },
   scrollViewContent: {
     marginTop: HEADER_MAX_HEIGHT,
