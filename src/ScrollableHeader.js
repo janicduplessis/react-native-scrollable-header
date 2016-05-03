@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {
   Animated,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -40,6 +41,18 @@ export default class ScrollableHeader extends Component {
       extrapolate: 'clamp',
     });
 
+    const imageOpacity = this.state.scrollY.interpolate({
+      inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
+      outputRange: [1, 1, 0],
+      extrapolate: 'clamp',
+    });
+
+    const imageTranslate = this.state.scrollY.interpolate({
+      inputRange: [0, HEADER_SCROLL_DISTANCE],
+      outputRange: [0, -50],
+      extrapolate: 'clamp',
+    });
+
     return (
       <View style={styles.fill}>
         <ScrollView
@@ -52,6 +65,13 @@ export default class ScrollableHeader extends Component {
           {this._renderScrollViewContent()}
         </ScrollView>
         <Animated.View style={[styles.header, {height: headerHeight}]}>
+          <Animated.Image
+            style={[
+              styles.backgroundImage,
+              {opacity: imageOpacity, transform: [{translateY: imageTranslate}]},
+            ]}
+            source={require('./images/cat.jpg')}
+          />
           <View style={styles.bar}>
             <Text style={styles.title}>Title</Text>
           </View>
@@ -74,6 +94,16 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: '#03A9F4',
+    overflow: 'hidden',
+  },
+  backgroundImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    width: null,
+    height: 200,
+    resizeMode: 'cover',
   },
   bar: {
     marginTop: 28,
