@@ -1,0 +1,7 @@
+{
+  "extends": "airbnb",
+  "rules": {
+    "object-curly-spacing": [2, "never"],
+    "no-use-before-define": [0]
+  }
+}
