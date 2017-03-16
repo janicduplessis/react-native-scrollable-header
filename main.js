@@ -3,14 +3,13 @@ import React, { Component } from 'react';
 import {
   Animated,
   Platform,
-  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 
-const HEADER_MAX_HEIGHT = 200;
+const HEADER_MAX_HEIGHT = 300;
 const HEADER_MIN_HEIGHT = Platform.OS === 'ios' ? 60 : 73;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
@@ -37,9 +36,9 @@ export default class App extends Component {
   }
 
   render() {
-    const headerHeight = this.state.scrollY.interpolate({
+    const headerTranslate = this.state.scrollY.interpolate({
       inputRange: [0, HEADER_SCROLL_DISTANCE],
-      outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
+      outputRange: [0, -HEADER_SCROLL_DISTANCE],
       extrapolate: 'clamp',
     });
 
@@ -50,7 +49,7 @@ export default class App extends Component {
     });
     const imageTranslate = this.state.scrollY.interpolate({
       inputRange: [0, HEADER_SCROLL_DISTANCE],
-      outputRange: [0, -50],
+      outputRange: [0, 100],
       extrapolate: 'clamp',
     });
 
@@ -72,16 +71,22 @@ export default class App extends Component {
           barStyle="light-content"
           backgroundColor="rgba(0, 0, 0, 0.251)"
         />
-        <ScrollView
+        <Animated.ScrollView
           style={styles.fill}
-          scrollEventThrottle={16}
-          onScroll={Animated.event([
-            { nativeEvent: { contentOffset: { y: this.state.scrollY } } },
-          ])}
+          scrollEventThrottle={1}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
+            { useNativeDriver: true },
+          )}
         >
           {this._renderScrollViewContent()}
-        </ScrollView>
-        <Animated.View style={[styles.header, { height: headerHeight }]}>
+        </Animated.ScrollView>
+        <Animated.View
+          style={[
+            styles.header,
+            { transform: [{ translateY: headerTranslate }] },
+          ]}
+        >
           <Animated.Image
             style={[
               styles.backgroundImage,
@@ -92,19 +97,19 @@ export default class App extends Component {
             ]}
             source={require('./cat.jpg')}
           />
-          <Animated.View
-            style={[
-              styles.bar,
-              {
-                transform: [
-                  { scale: titleScale },
-                  { translateY: titleTranslate },
-                ],
-              },
-            ]}
-          >
-            <Text style={styles.title}>Title</Text>
-          </Animated.View>
+        </Animated.View>
+        <Animated.View
+          style={[
+            styles.bar,
+            {
+              transform: [
+                { scale: titleScale },
+                { translateY: titleTranslate },
+              ],
+            },
+          ]}
+        >
+          <Text style={styles.title}>Title</Text>
         </Animated.View>
       </View>
     );
@@ -125,6 +130,7 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: '#03A9F4',
     overflow: 'hidden',
+    height: HEADER_MAX_HEIGHT,
   },
   backgroundImage: {
     position: 'absolute',
@@ -136,10 +142,15 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   bar: {
+    backgroundColor: 'transparent',
     marginTop: Platform.OS === 'ios' ? 28 : 38,
     height: 32,
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
   },
   title: {
     color: 'white',
