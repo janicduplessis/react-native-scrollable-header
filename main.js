@@ -1,8 +1,7 @@
 import Expo from 'expo';
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Animated,
-  Image,
   Platform,
   ScrollView,
   StatusBar,
@@ -25,14 +24,14 @@ export default class App extends Component {
   }
 
   _renderScrollViewContent() {
-    const data = Array.from({length: 30});
+    const data = Array.from({ length: 30 });
     return (
       <View style={styles.scrollViewContent}>
-        {data.map((_, i) =>
+        {data.map((_, i) => (
           <View key={i} style={styles.row}>
             <Text>{i}</Text>
           </View>
-        )}
+        ))}
       </View>
     );
   }
@@ -76,24 +75,32 @@ export default class App extends Component {
         <ScrollView
           style={styles.fill}
           scrollEventThrottle={16}
-          onScroll={Animated.event(
-            [{nativeEvent: {contentOffset: {y: this.state.scrollY}}}]
-          )}
+          onScroll={Animated.event([
+            { nativeEvent: { contentOffset: { y: this.state.scrollY } } },
+          ])}
         >
           {this._renderScrollViewContent()}
         </ScrollView>
-        <Animated.View style={[styles.header, {height: headerHeight}]}>
+        <Animated.View style={[styles.header, { height: headerHeight }]}>
           <Animated.Image
             style={[
               styles.backgroundImage,
-              {opacity: imageOpacity, transform: [{translateY: imageTranslate}]},
+              {
+                opacity: imageOpacity,
+                transform: [{ translateY: imageTranslate }],
+              },
             ]}
             source={require('./cat.jpg')}
           />
           <Animated.View
             style={[
               styles.bar,
-              {transform: [{scale: titleScale}, {translateY: titleTranslate}]},
+              {
+                transform: [
+                  { scale: titleScale },
+                  { translateY: titleTranslate },
+                ],
+              },
             ]}
           >
             <Text style={styles.title}>Title</Text>
