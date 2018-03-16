@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   View,
+  RefreshControl,
 } from 'react-native';
 
 const HEADER_MAX_HEIGHT = 300;
@@ -17,7 +18,11 @@ export default class App extends Component {
     super(props);
 
     this.state = {
-      scrollY: new Animated.Value(0),
+      scrollY: new Animated.Value(
+        // iOS has negative initial scroll value because content inset...
+        Platform.OS === 'ios' ? -HEADER_MAX_HEIGHT : 0,
+      ),
+      refreshing: false,
     };
   }
 
@@ -35,29 +40,35 @@ export default class App extends Component {
   }
 
   render() {
-    const headerTranslate = this.state.scrollY.interpolate({
+    // Because of content inset the scroll value will be negative on iOS so bring
+    // it back to 0.
+    const scrollY = Animated.add(
+      this.state.scrollY,
+      Platform.OS === 'ios' ? HEADER_MAX_HEIGHT : 0,
+    );
+    const headerTranslate = scrollY.interpolate({
       inputRange: [0, HEADER_SCROLL_DISTANCE],
       outputRange: [0, -HEADER_SCROLL_DISTANCE],
       extrapolate: 'clamp',
     });
 
-    const imageOpacity = this.state.scrollY.interpolate({
+    const imageOpacity = scrollY.interpolate({
       inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
       outputRange: [1, 1, 0],
       extrapolate: 'clamp',
     });
-    const imageTranslate = this.state.scrollY.interpolate({
+    const imageTranslate = scrollY.interpolate({
       inputRange: [0, HEADER_SCROLL_DISTANCE],
       outputRange: [0, 100],
       extrapolate: 'clamp',
     });
 
-    const titleScale = this.state.scrollY.interpolate({
+    const titleScale = scrollY.interpolate({
       inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
       outputRange: [1, 1, 0.8],
       extrapolate: 'clamp',
     });
-    const titleTranslate = this.state.scrollY.interpolate({
+    const titleTranslate = scrollY.interpolate({
       inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
       outputRange: [0, 0, -8],
       extrapolate: 'clamp',
@@ -77,6 +88,24 @@ export default class App extends Component {
             [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
             { useNativeDriver: true },
           )}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={() => {
+                this.setState({ refreshing: true });
+                setTimeout(() => this.setState({ refreshing: false }), 1000);
+              }}
+              // Android offset for RefreshControl
+              progressViewOffset={HEADER_MAX_HEIGHT}
+            />
+          }
+          // iOS offset for RefreshControl
+          contentInset={{
+            top: HEADER_MAX_HEIGHT,
+          }}
+          contentOffset={{
+            y: -HEADER_MAX_HEIGHT,
+          }}
         >
           {this._renderScrollViewContent()}
         </Animated.ScrollView>
@@ -156,7 +185,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   scrollViewContent: {
-    marginTop: HEADER_MAX_HEIGHT,
+    // iOS uses content inset, which acts like padding.
+    paddingTop: Platform.OS !== 'ios' ? HEADER_MAX_HEIGHT : 0,
   },
   row: {
     height: 40,
