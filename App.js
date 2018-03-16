@@ -110,6 +110,7 @@ export default class App extends Component {
           {this._renderScrollViewContent()}
         </Animated.ScrollView>
         <Animated.View
+          pointerEvents="none"
           style={[
             styles.header,
             { transform: [{ translateY: headerTranslate }] },
