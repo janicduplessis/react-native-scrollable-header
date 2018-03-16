@@ -1,4 +1,3 @@
-import Expo from 'expo';
 import React, { Component } from 'react';
 import {
   Animated,
@@ -95,7 +94,7 @@ export default class App extends Component {
                 transform: [{ translateY: imageTranslate }],
               },
             ]}
-            source={require('./cat.jpg')}
+            source={require('./assets/cat.jpg')}
           />
         </Animated.View>
         <Animated.View
@@ -167,5 +166,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-
-Expo.registerRootComponent(App);
